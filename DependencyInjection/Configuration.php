@@ -881,17 +881,18 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->children()
                         ->scalarNode('id')->end()
-                        ->scalarNode('host')->end()
-                        ->scalarNode('port')->defaultValue(9200)->end()
-                        ->scalarNode('transport')->defaultValue('Http')->end()
+                        ->arrayNode('hosts')
+                            ->canBeUnset()
+                            ->prototype('scalar')->end()
+                        ->end()
                         ->scalarNode('user')->defaultNull()->end()
                         ->scalarNode('password')->defaultNull()->end()
                     ->end()
                     ->validate()
                     ->ifTrue(function ($v) {
-                        return !isset($v['id']) && !isset($v['host']);
+                        return !isset($v['id']) && !isset($v['hosts']);
                     })
-                    ->thenInvalid('What must be set is either the host or the id.')
+                    ->thenInvalid('What must be set is either the hosts or the id.')
                     ->end()
                 ->end()
                 ->scalarNode('index')->defaultValue('monolog')->end() // elasticsearch & elastic_search & elastica
